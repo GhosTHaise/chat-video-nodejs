@@ -1,0 +1,27 @@
+*{
+    padding: 0;
+    margin: 0;
+}
+html{
+    font-size: 32px;
+}
+body{
+    font-size: .5rem;
+}
+body,html,section{
+    height: 100%;
+    width: 100%;
+}
+
+.section1{
+    background-color: rgb(230, 230, 230);
+    color: black;
+}
+.section2{
+    background-color: rgb(253, 136, 136);
+    color: white;
+}
+.section3{
+    background-color: rgb(253, 206, 136);
+    color: white;
+}
