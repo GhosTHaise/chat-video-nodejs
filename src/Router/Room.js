@@ -1,5 +1,5 @@
 const express = require("express");
-const RoomController =require('../Controller/RoomController');
+const RoomController =require('../Controller/RoomController.js');
 const Router = express.Router();
 
 const InitialiseRoomRoute = (app) => {
