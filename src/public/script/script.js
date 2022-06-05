@@ -8,7 +8,15 @@ navigator.mediaDevices.getUserMedia({
     audio : false
 }).then( stream => {
     addStreamVideo(video,stream);
+    myPeer.on("call",call =>{
+        call.answer(stream);
+        const video = document.createElement('video');
+        call.on("stream",uservideoStream => {
+            addStreamVideo(video,uservideoStream);
+        })
+    })
     socket.on("user-connected",(UserId)=>{
+        console.log("user : "+UserId+" join the room !");
         connecttoNewUser(UserId,stream)
     })
 }).catch(err => {
