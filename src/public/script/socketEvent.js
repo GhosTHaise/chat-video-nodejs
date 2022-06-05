@@ -1,4 +1,3 @@
-const socket = io("/");
 const myPeer = new Peer(undefined,{
     host : "localhost",
     port : "9003",
@@ -8,6 +7,11 @@ myPeer.on("open",(id)=>{
     socket.emit("join-room",Room_id,id);
 })
 
-socket.on("user-connected",(UserId)=>{
-    console.log("user : "+UserId+" join !");
-})
+
+const connecttoNewUser = (UserId,Stream) => {
+    const call = myPeer.call(UserId,Stream);
+    const video = document.createElement('video');
+    call.on("stream",userVideoStream => {
+        addStreamVideo(video,userVideoStream)
+    })
+}
