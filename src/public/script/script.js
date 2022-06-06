@@ -7,7 +7,7 @@ const myPeer = new Peer(undefined,{
     path : "/myapp"
 });
 
-
+let peer = []; 
 const video = document.createElement("video");
 let video_state = true;
 video.muted = true;
@@ -36,7 +36,10 @@ navigator.mediaDevices.getUserMedia({
 myPeer.on("open",(id)=>{
     socket.emit("join-room",Room_id,id);
 })
-
+ 
+socket.on("user-disconnected",(UserId)=>{
+    peer[UserId].close();
+});
 
 const addStreamVideo = (_video,_stream) => {
     _video.srcObject = _stream;
@@ -47,10 +50,16 @@ const addStreamVideo = (_video,_stream) => {
 }
 const connecttoNewUser = (UserId,Stream) => {
     const call = myPeer.call(UserId,Stream);
+    peer[UserId] = call;
+    console.log(call)
     const video = document.createElement('video');
     call.on("stream",userVideoStream => {
         console.log("Connect to new user !")
         addStreamVideo(video,userVideoStream);
+    })
+    call.on("close",()=>{
+        //supprimer la video creer
+        video.remove();
     })
 }
 /* pause and play video

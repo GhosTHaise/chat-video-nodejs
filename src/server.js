@@ -26,8 +26,11 @@ InitialiseRoomRoute(app);
 io.on('connection',(socket)=>{
     socket.on("join-room",(Roomid,UserId)=>{
         socket.join(Roomid);
-        socket.to(Roomid).emit("user-connected",UserId)
-    })
+        socket.to(Roomid).emit("user-connected",UserId);
+        socket.on("disconnect",()=>{
+            socket.to(Roomid).emit("user-disconnected",UserId);
+        })
+    });
 });
 //
 //Peer server
