@@ -1,5 +1,13 @@
-const socket = io("/");
 const videoContainer = document.querySelector("#video-container");
+const socket = io("/");
+
+const myPeer = new Peer(undefined,{
+    host : "localhost",
+    port : "9003",
+    path : "/myapp"
+});
+
+
 const video = document.createElement("video");
 let video_state = true;
 video.muted = true;
@@ -9,29 +17,42 @@ navigator.mediaDevices.getUserMedia({
 }).then( stream => {
     addStreamVideo(video,stream);
     myPeer.on("call",call =>{
+        console.log("call enabled")
         call.answer(stream);
         const video = document.createElement('video');
         call.on("stream",uservideoStream => {
+            console.log("add stream");
             addStreamVideo(video,uservideoStream);
-        })
-    })
+        });
+    });
     socket.on("user-connected",(UserId)=>{
         console.log("user : "+UserId+" join the room !");
         connecttoNewUser(UserId,stream)
     })
 }).catch(err => {
     alert("Please , active your webcam !");
+});
+
+myPeer.on("open",(id)=>{
+    socket.emit("join-room",Room_id,id);
 })
 
 
 const addStreamVideo = (_video,_stream) => {
-    video.srcObject = _stream;
-    video.addEventListener('loadedmetadata',()=>{
-        video.play();
+    _video.srcObject = _stream;
+    _video.addEventListener('loadedmetadata',()=>{
+        _video.play();
     });
-    videoContainer.append(video);
+    videoContainer.append(_video);
 }
-
+const connecttoNewUser = (UserId,Stream) => {
+    const call = myPeer.call(UserId,Stream);
+    const video = document.createElement('video');
+    call.on("stream",userVideoStream => {
+        console.log("Connect to new user !")
+        addStreamVideo(video,userVideoStream);
+    })
+}
 /* pause and play video
 document.addEventListener("click",()=>{
     (video_state) && video.pause();
